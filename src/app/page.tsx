@@ -1,101 +1,94 @@
-import Image from "next/image";
+'use client';
+
+import { ChangeEvent, useEffect, useState } from 'react';
+
+import Link from 'next/link';
+
+import { Make } from '../lib/types';
+
+import fetchMakes from '../lib/api/fetchMakes/fetchMakes';
+import generateStaticParams from '../lib/features/generateStaticParams';
+import range from '../lib/utils/range';
+
+import { START_YEAR } from '../lib/utils/constants';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [makes, setMakes] = useState<Make[] | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [makeId, setMakeId] = useState<number | null>(null);
+  const [year, setYear] = useState<number | null>(null);
+
+  const canGoNext = makeId && year;
+
+  useEffect(() => {
+    fetchMakes().then(setMakes);
+  }, []);
+
+  const years = range(START_YEAR, new Date().getFullYear() + 1);
+
+  const handleMakeIdChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setMakeId(Number(event.target.value));
+  };
+
+  const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setYear(Number(event.target.value));
+  };
+
+  return (
+    <div className='flex flex-col gap-10'>
+      <div className='flex flex-col gap-3'>
+        <div className='flex flex-col gap-1'>
+          <label htmlFor='maker'>Select maker:</label>
+
+          <select
+            value={makeId ?? -1}
+            onChange={handleMakeIdChange}
+            name='maker'
+            id='maker'
+            className='transition-color block w-full max-w-[500px] rounded bg-gray-200 p-4 duration-300 hover:bg-gray-300'
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <option value={-1} disabled>
+              Please, select a maker
+            </option>
+            {makes &&
+              makes.map((make) => (
+                <option key={make.MakeId} value={make.MakeId}>
+                  {make.MakeName}
+                </option>
+              ))}
+          </select>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className='flex flex-col gap-1'>
+          <label htmlFor='year'>Select a year:</label>
+
+          <select
+            value={year ?? -1}
+            onChange={handleYearChange}
+            name='year'
+            id='year'
+            className='transition-color block w-full max-w-[500px] rounded bg-gray-200 p-4 duration-300 hover:bg-gray-300'
+          >
+            <option value={-1} disabled>
+              Please, select a year
+            </option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <Link
+        className={`transition-color w-min rounded bg-green-400 px-4 py-1 duration-300 hover:bg-green-600 ${canGoNext ? '' : 'pointer-events-none bg-green-100 text-gray-500'}`}
+        aria-disabled={!canGoNext}
+        tabIndex={canGoNext ? undefined : -1}
+        href={generateStaticParams(makeId!, year!)}
+      >
+        Next
+      </Link>
     </div>
   );
 }
