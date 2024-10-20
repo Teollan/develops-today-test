@@ -60,7 +60,7 @@ export default function Home() {
         </div>
 
         <div className='flex flex-col gap-1'>
-          <label htmlFor='year'>Select a year:</label>
+          <label htmlFor='year'>Select year:</label>
 
           <select
             value={year ?? -1}
@@ -70,7 +70,7 @@ export default function Home() {
             className='transition-color block w-full max-w-[500px] rounded bg-gray-200 p-4 duration-300 hover:bg-gray-300'
           >
             <option value={-1} disabled>
-              Please, select a year
+              Please, select year
             </option>
             {years.map((year) => (
               <option key={year} value={year}>
