@@ -24,10 +24,12 @@ export default function Result({ params }: ResultProps) {
   return (
     <div className='flex flex-col gap-10'>
       <h1 className='text-center text-2xl'>
-        Results for{' '}
+        Results for
+        {' '}
         <Suspense fallback={<Loading />}>
           <MakeName makeId={makeId} />
-        </Suspense>{' '}
+        </Suspense>
+        {' '}
         ({year})
       </h1>
 

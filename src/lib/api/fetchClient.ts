@@ -1,13 +1,13 @@
 const BASE = process.env.API_BASE;
 
 async function get<T>(endpoint: string) {
-  const responce = await fetch(`${BASE}/${endpoint}`);
+  const response = await fetch(`${BASE}/${endpoint}`);
 
-  if (!responce.ok) {
+  if (!response.ok) {
     throw new Error('Failed to fetch data');
   }
 
-  const data: T = await responce.json();
+  const data: T = await response.json();
 
   return data;
 }

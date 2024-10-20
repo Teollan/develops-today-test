@@ -1,4 +1,5 @@
 import fetchModels from '@/lib/api/fetchModels/fetchModels';
+import ErrorNotification from './ErrorNotification';
 
 type Props = {
   makeId: number;
@@ -6,7 +7,13 @@ type Props = {
 };
 
 export default async function Models({ makeId, year }: Props) {
-  const models = await fetchModels(makeId, year);
+  let models;
+
+  try {
+    models = await fetchModels(makeId, year);
+  } catch {
+    return <ErrorNotification />;
+  }
 
   return (
     <section className='grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4'>
